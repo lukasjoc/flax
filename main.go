@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"slices"
 	"time"
 
@@ -17,8 +16,7 @@ func main() {
 	// 	NewSubCmd("geo").
 	// 	    SetFlag("lat").Int().Help("lat for stuff").Cmd().
 	// 	    SetFlag("long").Int().Help("long for stuff")
-
-	cmd := flax.NewCmd("holidays").
+	flax.NewCmd("holidays").
 		NewFlag("state").String().
 		Default("BY").
 		Validator(func(v any) error {
@@ -32,7 +30,8 @@ func main() {
 		Help("a valid two-letter german state code").Cmd().
 		NewFlag("year").Int().
 		Default(time.Now().Year()).
-		Help("the year to fetch").Cmd()
-
-	fmt.Printf("cmd => %#+v \n", cmd)
+		Help("the year to fetch").Cmd().
+		Parse()
+	// flax.Parse(cmd)
+	// fmt.Printf("cmd => %#+v \n", cmd)
 }

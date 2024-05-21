@@ -1,0 +1,6 @@
+TODO:
+===
+
+- option on flax to allow to mingle short options
+- support for `foo=bar` notation in args
+- short arg concatenated notation `-x42`

@@ -112,3 +112,5 @@ func (f *flag[T]) Int() *flag[T] {
 	f.validators = append(f.validators, validatorFunc)
 	return f
 }
+
+func (c *cmd) Parse() { Parse(c) }

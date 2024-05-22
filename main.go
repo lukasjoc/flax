@@ -2,6 +2,8 @@ package main
 
 import (
 	"errors"
+	"fmt"
+	"os"
 	"slices"
 	"time"
 
@@ -9,15 +11,9 @@ import (
 )
 
 func main() {
-	// intflagscmd := flax.
-	// 	NewCmd("basic").
-	// 	    SetFlag("x", reflect.Int).Help("x for stuff").Cmd().
-	// 	    SetFlag("y", reflect.Int).Help("y for stuff").Cmd().
-	// 	NewSubCmd("geo").
-	// 	    SetFlag("lat").Int().Help("lat for stuff").Cmd().
-	// 	    SetFlag("long").Int().Help("long for stuff")
-	flax.NewCmd("holidays").
-		NewFlag("state").String().
+	cmd := flax.NewCmd("holidays")
+	cmd.NewFlag("state").
+		String().
 		Default("BY").
 		Validator(func(v any) error {
 			stateCodes := []string{"NATIONAL", "BW", "BY", "BE", "BB", "HB", "HH",
@@ -27,11 +23,23 @@ func main() {
 			}
 			return nil
 		}).
-		Help("a valid two-letter german state code").Cmd().
-		NewFlag("year").Int().
-		Default(time.Now().Year()).
-		Help("the year to fetch").Cmd().
-		Parse()
-	// flax.Parse(cmd)
-	// fmt.Printf("cmd => %#+v \n", cmd)
+		Help("a valid two-letter german state code")
+	cmd.NewFlag("year").Int().Default(time.Now().Year()).Help("the year to fetch")
+
+	// flax.F[string]("hall", nil, "some flag")
+	// flag.FParse()
+	// flax.F(flax.Foo[string]{"hall", "some flag"})
+
+	if err := flax.Parse(cmd); err != nil {
+		fmt.Fprintf(os.Stderr, "ERROR: %v\n", err)
+		os.Exit(1)
+	}
+	// flag := cmd.Flag("state").ValueOr("state not set")
+	// flag;cmd.Flag[int].Value
+	flag := cmd.Flag("state").Value()
+	fmt.Printf("parsed args: %#+v \n", flag)
+
+	//    flax.SetFlag(flax.StringFlag{Name: "foo", Value: "hallo"})
+	//        .Validator(func () {})
+	// fooVal := flax.String("foo")
 }

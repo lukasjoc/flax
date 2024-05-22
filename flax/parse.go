@@ -12,8 +12,6 @@ type argKind int
 const (
 	argKindLong argKind = iota
 	argKindShort
-	// argKindValue
-	// argKindCmd
 )
 
 var (
@@ -23,14 +21,15 @@ var (
 	shortArgPrefixLen = len(shortArgPrefix)
 )
 
-type arg struct {
-	kind  argKind
-	name  string
-	value []string
-}
+//	type arg struct {
+//		kind  argKind
+//		name  string
+//		value []string
+//	}
 type parser struct {
-	rest   []string
-	parsed []arg
+	c    *cmd
+	rest []string
+	// parsed []arg
 }
 
 func (p *parser) shift()        { p.rest = p.rest[1:] }
@@ -55,7 +54,7 @@ func (p *parser) nextIsLong() bool {
 func (p *parser) nextIsShort() bool {
 	return !p.nextIsLong() && strings.HasPrefix(p.head(), shortArgPrefix)
 }
-func (p *parser) eatValues() []string {
+func (p *parser) eatWhileValue() []string {
 	s := []string{}
 	for {
 		if p.shifted() || p.nextIsLong() || p.nextIsShort() {
@@ -67,43 +66,63 @@ func (p *parser) eatValues() []string {
 	}
 	return s
 }
-func (p *parser) eatWhileLong() {
+func (p *parser) eatWhileLong() error {
+	if !p.nextIsLong() {
+		return nil
+	}
 	a, err := p.next()
 	if err != nil {
-		return
+		return err
 	}
 	// TODO: validate flag ident
 	if len(a) <= longArgPrefixLen {
-		panic(fmt.Sprintf("invalid long arg: %v", a))
+		return fmt.Errorf("cannot parse: `%s`", a)
 	}
-	p.parsed = append(p.parsed, arg{argKindLong, a[longArgPrefixLen:], p.eatValues()})
+	name := a[longArgPrefixLen:]
+	flag := p.c.Flag(name)
+	if flag == nil {
+		return fmt.Errorf("flag not found: `%s`", name)
+	}
+	value := p.eatWhileValue()
+	if len(value) > 1 {
+		return fmt.Errorf("multi-value arg not supported: `%s`", name)
+	}
+	// TODO: type casting
+	// TODO: validators
+	flag.setValue(value[0])
+	return nil
 }
-func (p *parser) eatWhileShort() {
-	a, err := p.next()
-	if err != nil {
-		return
+func (p *parser) eatWhileShort() error {
+	if !p.nextIsLong() {
+		return nil
 	}
-	// TOearO: validate flag ident
-	if len(a) <= shortArgPrefixLen {
-		panic(fmt.Sprintf("invalid short arg: %v", a))
-	}
-	p.parsed = append(p.parsed, arg{argKindLong, a[shortArgPrefixLen:], p.eatValues()})
-}
-func (p *parser) parse() {
-	for !p.shifted() {
-		if p.nextIsLong() {
-			p.eatWhileLong()
-		} else if p.nextIsShort() {
-			p.eatWhileShort()
-		} else {
-			panic(fmt.Sprintf("cannot parse: %v", p.head()))
-		}
-	}
+	// a, err := p.next()
+	// if err != nil {
+	// 	return
+	// }
+	// // TOearO: validate flag ident
+	// if len(a) <= shortArgPrefixLen {
+	// 	panic(fmt.Sprintf("invalid short arg: %v", a))
+	// }
+	// p.parsed = append(p.parsed, arg{argKindLong, a[shortArgPrefixLen:], p.eatWhileValue()})
+	return nil
 }
 
-func Parse(c *cmd) {
-	p := parser{os.Args[1:], []arg{}}
+func (p *parser) parse() error {
+	for !p.shifted() {
+		if err := p.eatWhileLong(); err != nil {
+			return err
+			// } else if err := p.eatWhileShort(); err != nil {
+			// 	return err
+		} else {
+			fmt.Errorf("cannot parse: %v", p.head())
+		}
+	}
+	return nil
+}
+
+func Parse(c *cmd) error {
+	p := parser{c, os.Args[1:]}
 	// TODO: sanitise the args provided ~before~ calling parse
-	p.parse()
-	fmt.Printf("parsed args: %#+v \n", p.parsed)
+	return p.parse()
 }

@@ -28,12 +28,7 @@ func (c *cmd) setFlag(f *flag[any]) *flag[any] {
 	return f
 }
 
-func (c *cmd) Flag(name string) *flag[any] {
-	if flag, ok := c.flags[name]; ok {
-		return flag
-	}
-	panic("flag with that name doesnt exists")
-}
+func (c *cmd) Flag(name string) *flag[any] { return c.flags[name] }
 
 type flag[T any] struct {
 	cmd        *cmd
@@ -77,12 +72,12 @@ func (f *flag[T]) setValue(v T) {
 	f.value = &v
 }
 
-func (f *flag[T]) ValueOr(or T) any {
-	if f.value == nil {
-		return or
-	}
-	return f.value
-}
+// func (f *flag[T]) ValueOr(or string) any {
+// 	if f.value == nil {
+// 		return or
+// 	}
+// 	return f.value
+// }
 
 func (f *flag[T]) Validator(validatorFunc func(v T) error) *flag[T] {
 	f.validators = append(f.validators, validatorFunc)
@@ -112,5 +107,34 @@ func (f *flag[T]) Int() *flag[T] {
 	f.validators = append(f.validators, validatorFunc)
 	return f
 }
+
+// type Flag interface {
+// 	Kind() int
+// }
+//
+// var ParsedFlags = map[string]Flag{}
+//
+// type StringFlag struct {
+// 	Name  string
+// 	Value string
+// }
+//
+// func (sv StringFlag) Kind() int { return 0 }
+//
+// func String(name string) Flag {
+// 	f := StringFlag{name, ""}
+// 	ParsedFlags[name] = f
+// 	return f
+// }
+//
+// func From(name string) string {
+// 	flag := ParsedFlags[name]
+// 	if flag.Kind() == 0 {
+// 		return flag.(StringFlag).Value
+// 	}
+// 	return ""
+// }
+//
+// func AsInt(name string) int { return ParsedFlags[name].(IntFlag).Value }
 
 func (c *cmd) Parse() { Parse(c) }

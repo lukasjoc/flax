@@ -1,6 +1,8 @@
-TODO:
-===
+- `cli.RequireStdin()` can be used to wait for stdin (blocking, buffered, from a bash pipe etc..)
+- `cli.WithMingledOpts()` can be used to allow mingled short ops (getopt like)
+- `cli.WithHelp()` can be used to generate a help flag
+- `cli.WithVersion(int)` can be used to generate a version flag. I like release timestamps for clis so thats the default
+- `cli.WithMan()` creates a manpage from the readme of the repo using pandoc
+- `cli.WithCompletetion()` creates a simple script for `complete X`
 
-- option on flax to allow to mingle short options
-- support for `foo=bar` notation in args
-- short arg concatenated notation `-x42`
+

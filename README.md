@@ -1,0 +1,3 @@
+# flax
+
+> Simple flag parser

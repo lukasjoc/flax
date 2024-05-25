@@ -1,6 +1,7 @@
 package flax
 
 import (
+	"fmt"
 	"strconv"
 )
 
@@ -68,6 +69,7 @@ func StringFunc(f func(v string) error) *stringValidator { return &stringValidat
 
 func (v *stringValidator) toString(s string) (string, error) { return s, nil }
 func (v *stringValidator) Try(f *flag) (string, error) {
+    fmt.Printf("TRY: %#+v\n", f)
 	value, err := v.toString(f.serial)
 	if err != nil {
 		return value, err

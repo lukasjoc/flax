@@ -22,7 +22,12 @@ func (v *intValidator) toInt(s string) (int, error) {
 	}
 	return value, nil
 }
+
+// TODO: TryFunc would be better I think
 func (v *intValidator) Try(f *flag) (int, error) {
+	if f.serial == Undef {
+		return 0, fmt.Errorf("`%s` expects an argument", f.spec.Name)
+	}
 	value, err := v.toInt(f.serial)
 	if err != nil {
 		return value, err
@@ -69,7 +74,9 @@ func StringFunc(f func(v string) error) *stringValidator { return &stringValidat
 
 func (v *stringValidator) toString(s string) (string, error) { return s, nil }
 func (v *stringValidator) Try(f *flag) (string, error) {
-    fmt.Printf("TRY: %#+v\n", f)
+	if f.serial == Undef {
+		return "", fmt.Errorf("`%s` expects an argument", f.spec.Name)
+	}
 	value, err := v.toString(f.serial)
 	if err != nil {
 		return value, err

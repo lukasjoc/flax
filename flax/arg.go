@@ -27,12 +27,6 @@ type Arg struct {
 	// TODO: Support for clobbered args -ArGs. Those should be parsed as seperate short args.
 }
 
-func decWithinBounds(x int) int {
-	if x == 0 {
-		return x
-	}
-	return x - 1
-}
 func parseArg(raw string, n uint) *Arg {
 	const (
 		flagPrefix     = "-"

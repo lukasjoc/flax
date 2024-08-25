@@ -79,11 +79,16 @@ func Shift() *Arg {
 	return arg
 }
 
-func Unshift() *Arg {
-	shifter.n--
-	return nil
+// Unshift decrements the position of the iterator and returns the current position.
+func Unshift() uint {
+	if shifter.n > 0 {
+		shifter.n--
+	}
+	return shifter.n
 }
 
+// Peek shifts one arg from the iterator and restores the position of the iterator
+// again, before returning the peeked arg to the caller.
 func Peek() *Arg {
 	arg := Shift()
 	Unshift()

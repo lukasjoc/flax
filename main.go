@@ -8,12 +8,16 @@ import (
 
 func main() {
 	program := flax.Shift()
+	fmt.Printf("%s IsProgram:%v\n", program.Name, program.Program)
 
-	fmt.Printf("%#v\n", program)
+    flax.Unshift()
+	programAgain := flax.Shift()
+	fmt.Printf("%s IsProgram:%v\n", programAgain.Name, programAgain.Program)
 
-	arg1 := flax.Shift()
-	fmt.Printf("%#v\n", arg1)
-
-	arg2 := flax.Shift()
-	fmt.Printf("%#v\n", arg2)
+	programAgainAgain := flax.Peek()
+	if programAgainAgain != nil {
+		fmt.Printf("%s IsProgram:%v\n", programAgainAgain.Name, programAgainAgain.Program)
+	} else {
+		fmt.Println("NIL")
+	}
 }

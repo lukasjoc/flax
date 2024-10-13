@@ -1,0 +1,9 @@
+@Type: todoreadme
+
+- pack the arguments to short and long flags into the argument until a
+  different flag is reached. Other args are treated as positionals. Values
+  []struct{Raw: string, Type: func(a string) T {/*infer the type through
+  reflection*/} }
+- Support for clobbered args -ArGs. Those should be parsed as seperate short args.
+- `-` should be disallowed + more argument text validation.
+

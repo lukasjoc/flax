@@ -25,6 +25,6 @@ import (
 func main() {
     _, args := flax.Collect()
     for _, arg := range args {
-	    fmt.Printf("Args: %#v\n", arg)
+	    fmt.Printf("Args: %v\n", arg)
     }
 }

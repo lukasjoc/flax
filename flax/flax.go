@@ -95,6 +95,16 @@ func Peek() *Arg {
 	return arg
 }
 
+// Collect parses all available args
+func Collect() (program *Arg, rest []*Arg) {
+	program = Shift()
+	for Peek() != nil {
+		arg := Shift()
+		rest = append(rest, arg)
+	}
+	return program, rest
+}
+
 // TODO: pack the arguments to short and long flags into the argument
 // until a different flag is reached. Other args are treated as positionals.
 // Values  []struct{Raw: string, Type: func(a string) T {/*infer the type through reflection*/} }

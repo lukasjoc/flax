@@ -67,8 +67,6 @@ func (s *Shifter) shifted() iter.Seq[*Arg] {
 	}
 }
 
-// Shift increments the position of the iterator and returns the result to the caller.
-// If the iterator is exhausted `nil` is returned.
 func Shift() *Arg {
 	next, stop := iter.Pull(shifter.shifted())
 	defer stop()
@@ -79,7 +77,6 @@ func Shift() *Arg {
 	return arg
 }
 
-// Unshift decrements the position of the iterator and returns the current position.
 func Unshift() uint {
 	if shifter.n > 0 {
 		shifter.n--
@@ -87,15 +84,12 @@ func Unshift() uint {
 	return shifter.n
 }
 
-// Peek shifts one arg from the iterator and restores the position of the iterator
-// again, before returning the peeked arg to the caller.
 func Peek() *Arg {
 	arg := Shift()
 	Unshift()
 	return arg
 }
 
-// Collect parses all available args
 func Collect() (program *Arg, rest []*Arg) {
 	program = Shift()
 	for Peek() != nil {
